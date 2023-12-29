@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Layout from '../components/Layout.js';
+import Image from 'next/image';
 
 export default function Home() {
   const [darkMode, setDarkMode] = useState(false);
@@ -22,7 +23,6 @@ export default function Home() {
         <title>WebTech</title>
         <meta name="description" content="Web technologies blogging application" />
         <link rel="icon" href="/icone cerveaux.ico" />
-        {/* Move the font link to the head of the document */}
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet" />
       </Head>
       <div className={`flex flex-col items-center p-5 rounded-lg ${darkMode ? 'dark-mode' : 'light-mode'}`} style={{ fontFamily: 'Roboto' }}>
@@ -30,7 +30,7 @@ export default function Home() {
           {darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
         </button>
         <h1 className="text-4xl font-bold text-center my-8 text-white">
-          Welcome to Blog'AI
+          Welcome to Blog&apos;AI {/* or use &apos; */}
         </h1>
         <ul className="flex justify-around list-none p-0 mb-8 space-x-8">
           <li>
@@ -50,8 +50,8 @@ export default function Home() {
           </li>
         </ul>
         <div className="flex justify-around py-12 bg-white rounded-lg space-x-8 mx-4">
-          <img src="image/IA.jpeg" alt="IA" className="w-1/2 h-auto rounded-lg mx-2" />
-          <img src="image/IA2.jpeg" alt="IA2" className="w-1/2 h-auto rounded-lg mx-2" />
+          <Image src="/image/IA.jpeg" alt="IA" width={500} height={500} className="w-1/2 h-auto rounded-lg mx-2" />
+          <Image src="/image/IA2.jpeg" alt="IA2" width={500} height={500} className="w-1/2 h-auto rounded-lg mx-2" />
         </div>
       </div>
     </Layout>
