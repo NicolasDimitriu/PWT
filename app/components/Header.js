@@ -25,7 +25,7 @@ export default function Header() {
       <Link href={`/`} className="flex-grow flex items-center">
         <Image src="/icone cerveaux.ico" className="cursor-pointer h-6 mr-5" alt="Adaltas Logo" width={30} height={60} />
         <span className={`rounded py-1 px-2 hover:${darkMode ? 'bg-slate-400 text-slate-100' : 'bg-slate-400 text-slate-900'} text-xl`}>
-          Blog'AI
+          Blog&apos;AI {/* or use &apos; */}
         </span>
       </Link>
       <ul className="flex gap-5">

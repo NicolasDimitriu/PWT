@@ -1,50 +1,49 @@
-import { useState, useEffect } from 'react'
-import Head from 'next/head'
-import Layout from '../../../components/Layout.js'
-import { useSupabaseClient } from '@supabase/auth-helpers-react'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
+import { useState, useEffect } from 'react';
+import Head from 'next/head';
+import Layout from '../../../components/Layout.js';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useRouter } from 'next/router';
 
 export default function Article({ id }) {
-    const supabase = useSupabaseClient()
-    const [title,setTitle] = useState('')
-    const [plot,setPlot] = useState('') 
-    const [genre,setGenre] = useState('') 
-    const router = useRouter()
+    const supabase = useSupabaseClient();
+    const [title, setTitle] = useState('');
+    const [plot, setPlot] = useState('');
+    const [genre, setGenre] = useState('');
+    const router = useRouter();
 
-    const onSubmit = async function(e){
-        e.preventDefault()
-        const {data, error} = await supabase
-        .from('articles') 
-        .update({title,plot,genre}) // Utilisez 'update' au lieu de 'insert'
-        .eq('id', id) // Spécifiez l'ID de l'article à mettre à jour
+    const onSubmit = async function (e) {
+        e.preventDefault();
+        const { data, error } = await supabase
+            .from('articles')
+            .update({ title, plot, genre }) // Utilisez 'update' au lieu de 'insert'
+            .eq('id', id); // Spécifiez l'ID de l'article à mettre à jour
         if (error) {
             console.error("Erreur lors de la mise à jour de l'article :", error);
         } else {
             console.log("Article mis à jour avec succès :", data);
-            router.push('/articles/articles') // Redirige vers la page de la liste d'articles
+            router.push('/articles/articles'); // Redirige vers la page de la liste d'articles
         }
-    }
+    };
 
     useEffect(() => {
         (async () => {
             let { data, error, status } = await supabase
-            .from('articles')
-            .select(`title, plot, genre`) 
-            .eq('id', id)
-            .single()
-            if (data){
-                setTitle(data.title)
-                setPlot(data.plot) 
-                setGenre(data.genre) 
+                .from('articles')
+                .select(`title, plot, genre`)
+                .eq('id', id)
+                .single();
+            if (data) {
+                setTitle(data.title);
+                setPlot(data.plot);
+                setGenre(data.genre);
             }
-        })()
-    }, [id])
+        })();
+    }, [id, supabase]); // Add 'supabase' to the dependency array
 
     return (
         <Layout>
             <Head>
-                <title>Blog'AI- Create Article </title>
+                <title>Blog&apos;AI- Create Article </title> {/* Escape single quote */}
                 <link rel="icon" href="/icone manette.ico" />
             </Head>
             <h1 className='wt-title'>
@@ -65,9 +64,9 @@ export default function Article({ id }) {
                     <div>
                         <label>Plot:</label>
                         <textarea
-                            id="plot" 
-                            value={plot} 
-                            onChange={(e) => setPlot(e.target.value)} 
+                            id="plot"
+                            value={plot}
+                            onChange={(e) => setPlot(e.target.value)}
                         />
                     </div>
 
@@ -75,9 +74,9 @@ export default function Article({ id }) {
                         <label>Genre:</label>
                         <input
                             type="text"
-                            id="genre" 
-                            value={genre} 
-                            onChange={(e) => setGenre(e.target.value)} 
+                            id="genre"
+                            value={genre}
+                            onChange={(e) => setGenre(e.target.value)}
                         />
                     </div>
 
@@ -89,7 +88,7 @@ export default function Article({ id }) {
                 </form>
             </div>
         </Layout>
-    )
+    );
 }
 
 export async function getServerSideProps(context) {
@@ -97,5 +96,5 @@ export async function getServerSideProps(context) {
         props: {
             id: context.params.id
         },
-    }
+    };
 }

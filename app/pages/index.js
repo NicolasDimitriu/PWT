@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import Head from 'next/head'
-import Link from 'next/link'
-import Layout from '../components/Layout.js'
+import Head from 'next/head';
+import Link from 'next/link';
+import Layout from '../components/Layout.js';
 
 export default function Home() {
   const [darkMode, setDarkMode] = useState(false);
@@ -22,6 +22,7 @@ export default function Home() {
         <title>WebTech</title>
         <meta name="description" content="Web technologies blogging application" />
         <link rel="icon" href="/icone cerveaux.ico" />
+        {/* Move the font link to the head of the document */}
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet" />
       </Head>
       <div className={`flex flex-col items-center p-5 rounded-lg ${darkMode ? 'dark-mode' : 'light-mode'}`} style={{ fontFamily: 'Roboto' }}>
