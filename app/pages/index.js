@@ -23,6 +23,7 @@ export default function Home() {
         <title>WebTech</title>
         <meta name="description" content="Web technologies blogging application" />
         <link rel="icon" href="/icone cerveaux.ico" />
+        {/* Move the font link to the head of the document */}
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet" />
       </Head>
       <div className={`flex flex-col items-center p-5 rounded-lg ${darkMode ? 'dark-mode' : 'light-mode'}`} style={{ fontFamily: 'Roboto' }}>
@@ -49,10 +50,7 @@ export default function Home() {
             </Link>
           </li>
         </ul>
-        <div className="flex justify-around py-12 bg-white rounded-lg space-x-8 mx-4">
-          <Image src="/image/IA.jpeg" alt="IA" width={500} height={500} className="w-1/2 h-auto rounded-lg mx-2" />
-          <Image src="/image/IA2.jpeg" alt="IA2" width={500} height={500} className="w-1/2 h-auto rounded-lg mx-2" />
-        </div>
+
       </div>
     </Layout>
   );
