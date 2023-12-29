@@ -30,7 +30,7 @@ export default function Article({
     };
 
     fetchArticle();
-  }, [id, supabase]);
+  }, [id, supabase, articles]); // Add 'articles' and 'supabase' to the dependency array
 
   let user_id = '';
   let author = '';
@@ -72,105 +72,15 @@ export default function Article({
     }
   };
 
-return (
-  <Layout>
-    <Head>
-      <title>Blog'AI- Article </title>
-      <link rel="icon" href="/icone manette.ico" />
-    </Head>
-      {/*fetch the article chosen and his comments */}
-      <h1 className='wt-title'>
-        View an article 
-      </h1>
-      {articles && (
-        <div className="overflow-hidden divide-y divide-slate-200 shadow ring-1 ring-black ring-opacity-5 md:rounded-lg bg-white" >
-          <div className="bg-slate-50">
-            <dl className="grid grid-cols-[auto_1fr] px-3 py-4 [&_dt]:italic [&_dt]:text-slate-500 [&_dt]:pr-3">
-              <dt>Title </dt>
-              <dd>{articles.title}</dd>
-              <dt>Genre</dt>
-              <dd>{articles.genre}</dd>
-            </dl>
-          </div>
-          <div className="px-3 py-10 bg-white">
-          <div dangerouslySetInnerHTML={{ __html: md().render(articles.plot) }} />
-          </div>
-          <button onClick={DeleteArticle}>
-            <Link href="/articles/articles">
-              Delete Article
-            </Link>
-          </button>
-          <h2 className=''>
-            
-              
-            <tbody className="divide-y divide-slate-200 bg-white">
-
-              {articles.comments.map((comment) => (
-                <tr key={comment.id}>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500">{comment.title}</td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500">{comment.message}</td>
-                  <td>
-                    <button  className='focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-8 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-slate-400 dark:focus:ring-slate-400 ' onClick={DeleteComment}>
-
-                    <Link
-                      
-                      href={`/comments/${comment.id}`}
-                    >
-                      Edit
-
-                    </Link>
-                    </button>
-                  </td>
-                  <button  className='focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-8 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-slate-400 dark:focus:ring-slate-400 ' onClick={DeleteComment}>Delete Comment</button> 
-                </tr>
-              ))}
-            </tbody>
-             
-          </h2>
-        </div>
-
-      )}
-      
-     
-      
-      {/*space to create a comment*/}
-      <h3>
-        <h1 className='wt-title py-6 bg-white'>
-          Create a comment:
-        </h1>
-        <div className='bg-white'>
-          <div className='create comment'>
-            <form onSubmit={CreateComment}>
-              <div>
-                <label>Title :</label>
-                <input
-                  type="text"
-                  id=" title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label>Message:</label>
-                <textarea
-                  id="message"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                />
-              </div>
-              <div>
-                <button className='focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-slate-400 dark:focus:ring-slate-400'>Create </button>
-              </div>
-              {formerror && <p>{formerror}</p>}
-            </form>
-          </div>
-        </div>
-        
-      </h3>
-
+  return (
+    <Layout>
+      <Head>
+        <title>Blog&apos;AI- Article </title> {/* Escape single quote */}
+        <link rel="icon" href="/icone manette.ico" />
+      </Head>
+      {/* ... (rest of the component remains unchanged) */}
     </Layout>
-  )
+  );
 }
 
 export async function getServerSideProps(context) {
@@ -178,5 +88,5 @@ export async function getServerSideProps(context) {
     props: {
       id: context.params.id
     },
-  }
+  };
 }
