@@ -30,9 +30,7 @@ export default function Home() {
         <button onClick={toggleDarkMode} className="mb-4">
           {darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
         </button>
-        <h1 className="text-4xl font-bold text-center my-8 text-white">
-          Welcome to Blog
-        </h1>
+
         <ul className="flex justify-around list-none p-0 mb-8 space-x-8">
           <li>
             <Link href="/articles">
