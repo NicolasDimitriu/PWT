@@ -23,7 +23,7 @@ export default function Home() {
         <title>WebTech</title>
         <meta name="description" content="Web technologies blogging application" />
         <link rel="icon" href="/icone cerveaux.ico" />
-        {/* Move the font link to the head of the document */}
+
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet" />
       </Head>
       <div className={`flex flex-col items-center p-5 rounded-lg ${darkMode ? 'dark-mode' : 'light-mode'}`} style={{ fontFamily: 'Roboto' }}>
@@ -31,7 +31,7 @@ export default function Home() {
           {darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
         </button>
         <h1 className="text-4xl font-bold text-center my-8 text-white">
-          Welcome to Blog&apos;AI {/* or use &apos; */}
+          Welcome to Blog
         </h1>
         <ul className="flex justify-around list-none p-0 mb-8 space-x-8">
           <li>
