@@ -20,8 +20,9 @@ function SearchBar({ articles, supabase, setArticles }) {
 
   async function deleteArticle(articleId) {
     const { data, error } = await supabase.from('articles').delete().match({ id: articleId });
-
+    
     if (!error) {
+      // Update the state to trigger a re-render without reloading the entire page
       setArticles((prevArticles) => prevArticles.filter((article) => article.id !== articleId));
     }
   }
@@ -76,17 +77,15 @@ export default function Articles() {
   const supabase = useSupabaseClient();
 
   useEffect(() => {
-    const fetchArticles = async () => {
+    (async () => {
       let { data, error } = await supabase.from('articles').select(`id, title, plot, genre`);
       if (error) {
         console.log(error);
       } else {
         setArticles(data);
       }
-    };
-
-    fetchArticles();
-  }, [supabase]); // Include supabase in the dependency array
+    })();
+  }, []);
 
   return (
     <Layout>

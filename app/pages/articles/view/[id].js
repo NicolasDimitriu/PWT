@@ -1,52 +1,44 @@
-import { useState, useEffect } from 'react';
-import Head from 'next/head';
-import Layout from '../../../components/Layout.js';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useState, useEffect } from 'react'
+import Head from 'next/head'
+import Layout from '../../../components/Layout.js'
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
 
 export default function Article({ id }) {
-    const supabase = useSupabaseClient();
-    const [title, setTitle] = useState('');
-    const [plot, setPlot] = useState('');
-    const [genre, setGenre] = useState('');
-    const [comments, setComments] = useState([]); // Ajout d'un état pour les commentaires
-    const [newComment, setNewComment] = useState(''); // État pour le nouveau commentaire
-    const [email, setEmail] = useState(''); // État pour l'e-mail
+    const supabase = useSupabaseClient()
+    const [title,setTitle] = useState('')
+    const [plot,setPlot] = useState('') 
+    const [genre,setGenre] = useState('') 
+    const [comments, setComments] = useState([]) // Ajout d'un état pour les commentaires
+    const [newComment, setNewComment] = useState('') // État pour le nouveau commentaire
+    const [email, setEmail] = useState('') // État pour l'e-mail
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const { data: articleData, error: articleError } = await supabase
-                    .from('articles')
-                    .select(`title, plot, genre`)
-                    .eq('id', id)
-                    .single();
-
-                if (articleError) {
-                    console.error("Error fetching article data:", articleError);
-                } else if (articleData) {
-                    setTitle(articleData.title);
-                    setPlot(articleData.plot);
-                    setGenre(articleData.genre);
-                }
-
-                // Récupération des commentaires de l'article
-                const { data: commentData, error: commentError } = await supabase
-                    .from('commentaire')
-                    .select(`content, mail`)
-                    .eq('idArticles', id);
-
-                if (commentError) {
-                    console.error("Error fetching comments:", commentError);
-                } else if (commentData) {
-                    setComments(commentData);
-                }
-            } catch (error) {
-                console.error("Error in fetchData:", error);
+        (async () => {
+            let { data, error, status } = await supabase
+            .from('articles')
+            .select(`title, plot, genre`) 
+            .eq('id', id)
+            .single()
+            if (error) {
+                console.error("Erreur lors de la récupération de l'article :", error);
+            } else if (data){
+                setTitle(data.title)
+                setPlot(data.plot) 
+                setGenre(data.genre) 
             }
-        };
 
-        fetchData();
-    }, [id, supabase]); // Add 'supabase' to the dependency array
+            // Récupération des commentaires de l'article
+            let { data: commentData, error: commentError, status: commentStatus } = await supabase
+            .from('commentaire')
+            .select(`content, mail`) 
+            .eq('idArticles', id)
+            if (commentError) {
+                console.error("Erreur lors de la récupération des commentaires :", commentError);
+            } else if (commentData){
+                setComments(commentData)
+            }
+        })()
+    }, [id])
 
     const handleCommentChange = event => {
         setNewComment(event.target.value);
@@ -59,29 +51,24 @@ export default function Article({ id }) {
     const handleSubmit = async event => {
         event.preventDefault();
         event.stopPropagation(); // Ajout de cette ligne
-        try {
-            const { data: commentData, error: commentError } = await supabase
-                .from('commentaire')
-                .insert([
-                    { content: newComment, mail: email, idArticles: id },
-                ]);
-
-            if (commentError) {
-                console.error("Error adding comment:", commentError);
-            } else if (commentData) {
-                setComments([...comments, commentData[0]]);
-                setNewComment('');
-                setEmail('');
-            }
-        } catch (error) {
-            console.error("Error in handleSubmit:", error);
+        const { data, error } = await supabase
+            .from('commentaire')
+            .insert([
+                { content: newComment, mail: email, idArticles: id },
+            ]);
+        if (error) {
+            console.error("Erreur lors de l'ajout du commentaire :", error);
+        } else if (data) {
+            setComments([...comments, data[0]]);
+            setNewComment('');
+            setEmail('');
         }
     };
 
     return (
         <Layout>
             <Head>
-                <title>Blog&apos;AI- Article Details</title> {/* Escape single quote */}
+                <title>Blog'AI- Article Details</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <h1 className='wt-title'>
@@ -143,7 +130,7 @@ export default function Article({ id }) {
                 }
             `}</style>
         </Layout>
-    );
+    )
 }
 
 export async function getServerSideProps(context) {
@@ -151,5 +138,5 @@ export async function getServerSideProps(context) {
         props: {
             id: context.params.id
         },
-    };
+    }
 }

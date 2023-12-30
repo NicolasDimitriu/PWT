@@ -1,155 +1,92 @@
-import { useState, useEffect } from 'react';
-import Head from 'next/head';
-import Layout from '../../components/Layout.js';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
-export default function Article({ id }) {
-    const supabase = useSupabaseClient();
-    const [title, setTitle] = useState('');
-    const [plot, setPlot] = useState('');
-    const [genre, setGenre] = useState('');
-    const [comments, setComments] = useState([]); // Ajout d'un état pour les commentaires
-    const [newComment, setNewComment] = useState(''); // État pour le nouveau commentaire
-    const [email, setEmail] = useState(''); // État pour l'e-mail
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import Head from 'next/head.js'
+import Layout from '../components/Layout.js'
+import Link from 'next/link.js'
+import { useRouter } from 'next/router'
+import { useState, useContext } from 'react'
+import UserContext from '../components/UserContext'
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const { data: articleData, error: articleError } = await supabase
-                    .from('articles')
-                    .select(`title, plot, genre`)
-                    .eq('id', id)
-                    .single();
+export default function Create () {
+    const { user } = useContext(UserContext) // Utilisez useContext pour obtenir les informations de l'utilisateur
+    const uuid = user ? user.id : null // Obtenez l'UUID de l'utilisateur
 
-                if (articleError) {
-                    console.error("Error fetching article data:", articleError);
-                } else if (articleData) {
-                    setTitle(articleData.title);
-                    setPlot(articleData.plot);
-                    setGenre(articleData.genre);
-                }
+    const supabase = useSupabaseClient()
+    const [title,setTitle] = useState('')
+    const [plot,setPlot] = useState('')
+    const [genre,setGenre] = useState('')
+    const router = useRouter()
 
-                // Récupération des commentaires de l'article
-                const { data: commentData, error: commentError } = await supabase
-                    .from('commentaire')
-                    .select(`content, mail`)
-                    .eq('idArticles', id);
-
-                if (commentError) {
-                    console.error("Error fetching comments:", commentError);
-                } else if (commentData) {
-                    setComments(commentData);
-                }
-            } catch (error) {
-                console.error("Error in fetchData:", error);
-            }
-        };
-
-        fetchData();
-    }, [id, supabase]); // Add 'supabase' to the dependency array
-
-    const handleCommentChange = event => {
-        setNewComment(event.target.value);
-    };
-
-    const handleEmailChange = event => {
-        setEmail(event.target.value);
-    };
-
-    const handleSubmit = async event => {
-        event.preventDefault();
-        event.stopPropagation(); // Ajout de cette ligne
-        try {
-            const { data: commentData, error: commentError } = await supabase
-                .from('commentaire')
-                .insert([
-                    { content: newComment, mail: email, idArticles: id },
-                ]);
-
-            if (commentError) {
-                console.error("Error adding comment:", commentError);
-            } else if (commentData) {
-                setComments([...comments, commentData[0]]);
-                setNewComment('');
-                setEmail('');
-            }
-        } catch (error) {
-            console.error("Error in handleSubmit:", error);
+    const onSubmit = async function(e){
+        e.preventDefault()
+        const {data, error} = await supabase
+        .from('articles') 
+        .insert([{title, plot, genre, author_id: uuid}]) // Incluez l'UUID de l'utilisateur lors de l'insertion
+        if (error) {
+            console.error("Erreur lors de l'ajout de l'article :", error);
+        } else {
+            console.log("Article ajouté avec succès :", data);
+            router.push('/articles/articles') // Redirige vers la page de la liste d'articles
         }
-    };
+    }
 
     return (
         <Layout>
             <Head>
-                <title>Blog&apos;AI- Article Details</title> {/* Escape single quote */}
-                <link rel="icon" href="/favicon.ico" />
+            <title>Blog'AI - create Article</title>
             </Head>
-            <h1 className='wt-title'>
-                Article Details:
-            </h1>
-            <div className='article'>
-                <p><strong>Titre: </strong>{title}</p>
-                <p><strong>Plot : </strong> {plot}</p>
-                <p><strong>Genre: </strong> {genre}</p>
-            </div>
-            <h2 className='wt-title'>
-                Commentaires:
-            </h2>
-            <div className='comments'>
-                {comments.map((comment, index) => (
-                    <div key={index}>
-                        <p><strong>Email: </strong>{comment.mail}</p>
-                        <p><strong>Commentaire : </strong> {comment.content}</p>
+            <div className='create article'>
+                <form onSubmit={onSubmit}>
+                    <div className='block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500 px-6 py-6'>
+                        <label>Title :</label>
+                        <input 
+                        type="text"
+                        id=" title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        required
+                        />
                     </div>
-                ))}
-            </div>
-            <h2 className='wt-title'>
-                Ajouter un commentaire:
-            </h2>
-            <form onSubmit={handleSubmit} className="comment-form">
-                <label>
-                    Email:
-                    <input type="email" value={email} onChange={handleEmailChange} required className="input-field" />
-                </label>
-                <label>
-                    Commentaire:
-                    <textarea value={newComment} onChange={handleCommentChange} required className="textarea-field" />
-                </label>
-                <button type="submit" className="submit-button">Ajouter</button>
-            </form>
-            <style jsx>{`
-                .comment-form {
-                    display: flex;
-                    flex-direction: column;
-                    width: 100%;
-                    max-width: 600px;
-                    margin: 0 auto;
-                }
-                .input-field, .textarea-field {
-                    margin: 10px 0;
-                    padding: 10px;
-                    width: 100%;
-                }
-                .submit-button {
-                    margin: 10px 0;
-                    padding: 10px;
-                    background-color: #0070f3;
-                    color: white;
-                    border: none;
-                    cursor: pointer;
-                }
-                .submit-button:hover {
-                    background-color: #0051bb;
-                }
-            `}</style>
-        </Layout>
-    );
-}
 
-export async function getServerSideProps(context) {
-    return {
-        props: {
-            id: context.params.id
-        },
-    };
+                    <div className='block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500 px-6 py-6'>
+                        <label>Content:</label>
+                        <textarea 
+                        id="plot"
+                        value={plot}
+                        onChange={(e) => setPlot(e.target.value)}
+                        required
+                        />
+                    </div>
+                    
+                    <div className='block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500 px-6 py-6'>
+                        <label>Genre:</label>
+                        <input 
+                        type="text"
+                        id="genre"
+                        value={genre}
+                        onChange={(e) => setGenre(e.target.value)}
+                        required
+                        />
+                    </div>
+                    <div>
+                        <button type="submit" className='focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-slate-400 dark:focus:ring-slate-400'>
+                            Create Article
+                        </button>
+                    </div>
+                </form>
+                <div>
+                    <ul>
+                        <li>
+                            <button className='focus:outline-none text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-slate-400 dark:focus:ring-slate-400'>
+                                <Link href="/articles/articles">
+                                    Cancel
+                                </Link>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </Layout>
+
+    )
 }
