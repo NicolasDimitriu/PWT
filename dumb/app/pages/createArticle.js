@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import Layout from '../../components/Layout.js';
+import Layout from '../components/Layout.js'
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 export default function Article({ id }) {
